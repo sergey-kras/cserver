@@ -1,0 +1,14 @@
+[
+    {
+        "id": "sdfsdff23f3f",
+        "login": "1",
+        "mail": "somekof",
+        "password": "1",
+        "rang": "user",
+        "onlineStatus": false,
+        "subscribe": "28.04.2019",
+        "sid": "jy453u5h3jk4h5jkh34k5fejhky7e",
+        "blackIp": ["1231.234234","23234.23423.345345"],
+        "whiteIp": ["1231.234234","23234.23423.345345"]
+    }
+]

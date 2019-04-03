@@ -1,0 +1,28 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "now-start": "node ./app/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "guid": "0.0.12",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-logger": "^3.2.0",
+    "koa-router": "^7.4.0",
+    "koa-static": "^5.0.0",
+    "md5": "^2.2.1",
+    "mongoose": "^5.4.21",
+    "nodemailer": "^6.0.0",
+    "random-number": "0.0.9"
+  },
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
