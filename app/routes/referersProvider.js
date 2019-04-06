@@ -3,7 +3,8 @@ let UserSchema = require("../schemas/user");
 let RefererSchema = require("../schemas/referers");
 var rn = require("random-number");
 let md5 = require('md5');
-var mailer = require("nodemailer");
+var emailServer = require("emailjs");
+const http = require('http');
 var gen = rn.generator({
   min: 100000,
   max: 999999,
@@ -56,32 +57,29 @@ class referersProvider {
   }
 
   sendMail(email, text) {
-    var smtpTransport = mailer.createTransport({
-      service: 'Yandex',
-      auth: {
-        user: "system@neurobis.ru",
-        pass: "Qwerty282"
-      },
-      secure: true
-    });
-
-    var mail = {
-      from: "Сергей Краснолуцкий <nicoledooley@my.smccd.edu>",
-      to: email,
-      subject: "Смена пароля в сервисе neurobis scaner",
-      text: text,
-      html: ""
+    function mailString(mail){
+      let getString = "";
+      for (var key in mail) {
+        if (getString != "") {
+          getString += "&"; 
+        }
+        getString += key + "=" + encodeURIComponent(mail[key]);
+      }
+      return getString;
+    }
+    let mail = {
+      mail: email,
+      subject: "Смена пароля",
+      text:text,
     };
 
-    smtpTransport.sendMail(mail, function (error, response) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Message sent: " + response.message);
-      }
-
-      smtpTransport.close();
-    });
+    let NewMail = {
+      mail: 'scan.neurobis.ru',
+      subject: "Смена пароля",
+      text:text,
+    };
+    console.log(new Date(), mail)
+    http.get('http://185.178.44.154:5000/email?' + mailString(mail), resp => {});
   }
 
   async removeUser() {
@@ -100,7 +98,7 @@ class referersProvider {
       _id: removableId
     });
     this.sendMail(removableUser[0].mail, 'Ваш аккаунт удален администратором ' + this.user.mail);
-    console.log("removeUser", refStatus, userStatus);
+    
     if (refStatus.ok == 1 && userStatus == 1) {
       return {
         status: true
@@ -118,6 +116,7 @@ class referersProvider {
     let resetableUser = this.ctx.params.id;
     let mailSubscribe = this.ctx.request.body.mailSubscribe;
     let newPass = String(gen());
+    let mailStatus;
     let result = await UserSchema.updateOne({
       _id: resetableUser
     }, {

@@ -11,7 +11,9 @@
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",
+    "emailjs": "^2.2.0",
     "guid": "0.0.12",
+    "http": "0.0.0",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-logger": "^3.2.0",

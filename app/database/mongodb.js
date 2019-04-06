@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 var uri = 'mongodb+srv://neurobis0:piwdis-Deqkiq-9fojcu@cluster0-5083p.azure.mongodb.net/neurobis?retryWrites=true';
 
-mongoose.connect(uri).then(() => {
+mongoose.connect(uri, { useNewUrlParser: true }).then(() => {
     console.log("connect to database parser");
 })
     .catch((e) => {

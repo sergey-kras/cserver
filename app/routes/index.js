@@ -16,7 +16,8 @@ router.post("/login", async (ctx, next) => {
   user.password = md5(user.password);
   await User.loginUser(user).then(result => {
     if (result) {
-      ctx.set("Set-Cookie", "sid=" + result.sid + ";domain=neurobis.now.sh");
+      // ctx.set("Set-Cookie", "sid=" + result.sid + ";domain=neurobis.now.sh");
+      ctx.set("Set-Cookie", "sid=" + result.sid);
       // ctx.cookies.set('sid', result.sid, { signed: true, path: '/'});
       ctx.body = { statusLogin: true, rang: result.res.rang };
       //ctx.send(200,{ statusLogin: true, rang: result.res.rang });
