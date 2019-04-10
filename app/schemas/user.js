@@ -5,9 +5,11 @@ const Schema = mongodb.Schema;
 
 const User = new Schema({
     vk_id: String,
+    photo: String,
     login: String,
-    password: String,
-    sid: String
+    sid: String,
+    date: Date,
+    access_token: String,
 });
 
 const UserTable = model('users', User);

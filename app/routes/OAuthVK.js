@@ -1,6 +1,8 @@
 const env = require("../../config");
 const queryString = require('query-string');
 const UserSchema = require("../schemas/user");
+const easyvk = require('easyvk')
+const Guid = require("guid");
 
 class OAuthVK {
     constructor() {
@@ -19,9 +21,9 @@ class OAuthVK {
         let repo = await ctx.get(`https://oauth.vk.com/access_token?${qString}`, null, {
             'User-Agent': 'koa-http-request'
         });
-
-        if (repo.access_token) this.goodAuth(repo);
-        else this.badAuth();
+       
+        if (repo.access_token) await this.goodAuth(repo);
+        else await this.badAuth();
         return this.ctx;
     }
 
@@ -29,8 +31,7 @@ class OAuthVK {
         let resultUser = await UserSchema.findOne({
             vk_id: repo.user_id
         });
-        if (resultUser) await this.validateUser();
-        else await this.addNewUser(repo);
+        if (!resultUser) await this.addNewUser(repo);
         this.ctx.redirect(`${env.FRONTENT_URI}/private?${repo.access_token.substring(0,10)}`, '', 302);
     }
 
@@ -39,29 +40,27 @@ class OAuthVK {
     }
 
     async addNewUser(repo) {
-        let qObj = {
-            user_ids: repo.user_id,
-            fields: ["first_name", "last_name"],
+        let info = await easyvk({
             access_token: repo.access_token,
-            v: "5.92",
-        };
-        let qString = queryString.stringify(qObj);
-        let info = await this.ctx.get(`https://api.vk.com/method/users.get?`, null, {
-            'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:12.0) Gecko/20100101 Firefox/12.0',
-            'Origin': 'http://localhost:4200'
+            fields: "first_name,last_name,photo_200_orig",
         });
-        // let name = info.response[0].first_name + ' ' + info.response[0].last_name;
-        console.log(`https://api.vk.com/method/users.get?` + qString, info);
+
+        let { user_id, first_name, last_name, photo_200_orig, access_token } = info.session;
+
         let newUser = new UserSchema({
-            vk_id: repo.user_id,
-            // login: name,
-            password: String,
-            sid: String
+            vk_id: user_id,
+            login: first_name + ' ' + last_name,
+            photo: photo_200_orig,
+            date: new Date(),
+            access_token,
+            sid: Guid.raw(),
         });
+
+        let saveResult = await newUser.save();
     }
 
-    async validateUser() {
-
+    async validateUser(user) {
+        console.log(user);
     }
 }
 

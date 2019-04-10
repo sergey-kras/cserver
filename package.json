@@ -29,6 +29,7 @@
     "random-number": "0.0.9"
   },
   "dependencies": {
+    "easyvk": "^2.4.0",
     "express": "^4.16.4",
     "query-string": "^6.4.2"
   }
