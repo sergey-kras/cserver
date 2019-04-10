@@ -2,6 +2,8 @@ const Router = require("koa-router");
 const axios = require("axios");
 let md5 = require('md5');
 const http = require('http');
+const env = require("../../config");
+
 
 const app = require("../middlwares");
 const OAuthVK = require("../routes/OAuthVK");
