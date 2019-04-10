@@ -1,70 +1,36 @@
-const newUser = require("./newUser");
-const referersProvider =  require("./referersProvider");
 const Router = require("koa-router");
 const router = new Router();
-const User = require("../database/user");
 const app = require("../middlwares");
+const axios = require("axios");
 let md5 = require('md5');
+const http = require('http');
 
-router.options("/newUser", async (ctx, next)=>{
-  ctx.body = true;
-  await next();
-});
 
 router.post("/login", async (ctx, next) => {
   let user = ctx.request.body;
   user.password = md5(user.password);
   await User.loginUser(user).then(result => {
     if (result) {
-      // ctx.set("Set-Cookie", "sid=" + result.sid + ";domain=neurobis.now.sh");
       ctx.set("Set-Cookie", "sid=" + result.sid);
-      // ctx.cookies.set('sid', result.sid, { signed: true, path: '/'});
-      ctx.body = { statusLogin: true, rang: result.res.rang };
-      //ctx.send(200,{ statusLogin: true, rang: result.res.rang });
+      ctx.body = {
+        statusLogin: true,
+        rang: result.res.rang
+      };
     } else {
-      // ctx.send(200,{ statusLogin: false });
-      ctx.body = { statusLogin: false };
+      ctx.body = {
+        statusLogin: false
+      };
     }
   });
   await next();
 });
 
-router.get("/info", async (ctx, next) => {
-  let sid = ctx.cookies.get("sid");
-  console.log(sid);
-  await User.checkSession(sid).then(result => {
-    ctx.body = {
-      login: result[0].login,
-      rang: result[0].rang
-    };
-  });
-  await next();
-});
-
-router.post("/newUser", async (ctx, next) => {
-  let createUser = new newUser(ctx.state.user, ctx);
-  ctx.body = await createUser.main();
-});
-
-router.get("/referrers", async (ctx, next) => {
-  let referer = new referersProvider(ctx);
-  ctx.body = await referer.getUsers();
-});
-
-router.get("/users", async (ctx, next) => {
-  let UserSchema = require("../schemas/user");
-  let sid = ctx.cookies.get("sid");
-  ctx.body = {users: await UserSchema.find({}), sid};
-});
-
-router.delete("/referrers/:id", async (ctx, next) => {
-  let referer = new referersProvider(ctx);
-  ctx.body = await referer.removeUser();
-});
-
-router.patch("/referrers/:id", async (ctx, next) => {
-  let referer = new referersProvider(ctx);
-  ctx.body = await referer.resetThePassword();
+router.get("/auth", async (ctx, next) => {
+  let code = ctx.query.code;
+  let accessToken = ctx.query.access_token;
+  let repo = await ctx.get(`https://oauth.vk.com/access_token?client_id=6933029&client_secret=96LBXxmjF4n604Kqn6ao&redirect_uri=http://127.0.0.1:4200/auth&code=${code}`, null, { 'User-Agent': 'koa-http-request' });
+  console.log(repo);
+  if(repo.access_token) { ctx.redirect("http://localhost:3000") }
 });
 
 app.use(router.routes()).use(router.allowedMethods());

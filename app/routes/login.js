@@ -1,4 +1,3 @@
-const User = require("../database/user");
 let md5 = require('md5');
 var rn = require("random-number");
 var emailServer = require("emailjs");

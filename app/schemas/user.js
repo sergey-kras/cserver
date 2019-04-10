@@ -4,17 +4,10 @@ const model = require('mongoose').model;
 const Schema = mongodb.Schema;
 
 const User = new Schema({
-    name: String,
-    id: Number,
+    vk_id: String,
     login: String,
-    mail: String,
     password: String,
-    rang: String,
-    onlineStatus: Boolean,
-    subscribe: Date,
-    sid: String,
-    blackIp: Array,
-    whiteIp: Array,
+    sid: String
 });
 
 const UserTable = model('users', User);
