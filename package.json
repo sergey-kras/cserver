@@ -4,13 +4,16 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "now-start": "node ./app/index.js"
+    "now-start": "node ./app/index.js",
+    "start": "nodemon -r dotenv/config index.js",
+    "start_prod": "NODE_ENV=production nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.26.3",
+    "dotenv": "^7.0.0",
     "emailjs": "^2.2.0",
     "guid": "0.0.12",
     "http": "0.0.0",
@@ -22,9 +25,11 @@
     "md5": "^2.2.1",
     "mongoose": "^5.4.21",
     "nodemailer": "^6.0.0",
+    "nodenv": "^0.1.0",
     "random-number": "0.0.9"
   },
   "dependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "query-string": "^6.4.2"
   }
 }
