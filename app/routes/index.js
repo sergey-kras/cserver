@@ -15,7 +15,7 @@ router.get("/login", async (ctx, next) => {
   ctx.body = ctx.state;
 });
 
-router.get("/auth", async (ctx, next) => {
+router.get("/user/checkAuth", async (ctx, next) => {
   await OAuthVK.main(ctx);
 });
 

@@ -10,7 +10,7 @@ class authUser {
     }
 
     async conditions() {
-        if (this.ctx.path !== '/auth') {
+        if (this.ctx.path !== '/user/checkAuth') {
             let result = await this.checkUser();
             if (result) {
                 return {
