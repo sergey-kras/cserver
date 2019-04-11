@@ -11,23 +11,8 @@ const OAuthVK = require("../routes/OAuthVK");
 const router = new Router();
 
 
-router.post("/login", async (ctx, next) => {
-  let user = ctx.request.body;
-  user.password = md5(user.password);
-  await User.loginUser(user).then(result => {
-    if (result) {
-      ctx.set("Set-Cookie", "sid=" + result.sid);
-      ctx.body = {
-        statusLogin: true,
-        rang: result.res.rang
-      };
-    } else {
-      ctx.body = {
-        statusLogin: false
-      };
-    }
-  });
-  await next();
+router.get("/login", async (ctx, next) => {
+  ctx.body = ctx.state;
 });
 
 router.get("/auth", async (ctx, next) => {

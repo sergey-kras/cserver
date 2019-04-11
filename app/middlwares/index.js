@@ -7,9 +7,10 @@ const md5 = require('md5');
 const koaRequest = require('koa-http-request');
 const env = require("../../config");
 
-
+const authUser = require("./authUser");
 
 app.use(bodyParser());
+
 app.use(koaRequest({
     json: true, //automatically parsing of JSON response
     timeout: 3000,    //3s timeout
@@ -21,24 +22,14 @@ app.use(async (ctx, next) => {
     ctx.set('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     ctx.set('Access-Control-Allow-Credentials', "true");
 
-    // ctx.body = true;
+    // ctx.body = true
     await next();
 });
 
 app.use(async (ctx, next) => {    
-    // if (ctx.path !== '/login' && ctx.path !== '/users') {
-    //     let sid = ctx.cookies.get('sid');
-    //     let result = await User.checkSession(sid);
-    //     console.log(result);
-    //     ctx.state.user = result[0];
-    //     if (result) await next();
-    //     else ctx.body = {
-    //         message: "Недостаточно прав"
-    //     }
-    // } else {
-    //     await next();
-    // }
-    await next();
+    let result = await authUser.main(ctx, next);
+    ctx = result.ctx;
+    await result.next;
 })
 
 app.use(serve('public'));
