@@ -15,8 +15,8 @@ class OAuthVK {
 
     async main(ctx) {
         this.ctx = ctx;
+        this.ctx.type = "html";
         this.appSettings.code = this.ctx.query.code;
-
         let qString = queryString.stringify(this.appSettings);
         let repo = await ctx.get(`https://oauth.vk.com/access_token?${qString}`, null, {
             'User-Agent': 'koa-http-request'
@@ -32,7 +32,7 @@ class OAuthVK {
             vk_id: repo.user_id
         });
         if (!resultUser) await this.addNewUser(repo);
-        this.ctx.redirect(`${env.FRONTENT_URI}/private?${repo.access_token.substring(0,10)}`, '', 302);
+        else this.validateUser(resultUser);
     }
 
     badAuth() {
@@ -57,10 +57,11 @@ class OAuthVK {
         });
 
         let saveResult = await newUser.save();
+        this.ctx.body = require("../templates/goodAuth").render({ sid: saveResult.sid });
     }
 
     async validateUser(user) {
-        console.log(user);
+        this.ctx.body = require("../templates/goodAuth").render({ sid: user.sid });
     }
 }
 
