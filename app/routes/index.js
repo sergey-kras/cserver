@@ -18,9 +18,12 @@ router.get("/user/balance/:type", async (ctx, next) => {
   let currency = ctx.params.type;
 });
 
-router.get("/user/info", async (ctx, next) => {
-  await User.info(ctx);
+router.get("/test", async (ctx, next) => {
+  ctx.body = '234234324';
+  next()
 });
+
+router.get("/user/info", User.info.bind(User));
 
 router.get("/user/balances", async (ctx, next) => {
   await User.balances(ctx);
