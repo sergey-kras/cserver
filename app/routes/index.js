@@ -7,12 +7,31 @@ const env = require("../../config");
 
 const app = require("../middlwares");
 const OAuthVK = require("../routes/OAuthVK");
+const UserSiteTransactions = require("../routes/UserSiteTransactions");
+const User = require("../routes/User");
+
 
 const router = new Router();
 
 
-router.get("/login", async (ctx, next) => {
-  ctx.body = ctx.state;
+router.get("/user/balance/:type", async (ctx, next) => {
+  let currency = ctx.params.type;
+});
+
+router.get("/user/info", async (ctx, next) => {
+  await User.info(ctx);
+});
+
+router.get("/user/balances", async (ctx, next) => {
+  await User.balances(ctx);
+});
+
+router.get("/user/transactions", async (ctx, next) => {
+  await User.transactions(ctx);
+});
+
+router.get("/user/site/transactions/:type", async (ctx, next) => {
+  await UserSiteTransactions.get(ctx);
 });
 
 router.get("/user/checkAuth", async (ctx, next) => {
