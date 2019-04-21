@@ -3,6 +3,8 @@ const queryString = require('query-string');
 const UserSchema = require("../schemas/user");
 const easyvk = require('easyvk')
 const Guid = require("guid");
+const CoinBalanceSchema = require("../schemas/coin_balance");
+const RubBalanceSchema = require("../schemas/rub_balance");
 
 class OAuthVK {
     constructor() {
@@ -21,7 +23,7 @@ class OAuthVK {
         let repo = await ctx.get(`https://oauth.vk.com/access_token?${qString}`, null, {
             'User-Agent': 'koa-http-request'
         });
-       
+
         if (repo.access_token) await this.goodAuth(repo);
         else await this.badAuth();
         return this.ctx;
@@ -45,7 +47,13 @@ class OAuthVK {
             fields: "first_name,last_name,photo_200_orig",
         });
 
-        let { user_id, first_name, last_name, photo_200_orig, access_token } = info.session;
+        let {
+            user_id,
+            first_name,
+            last_name,
+            photo_200_orig,
+            access_token
+        } = info.session;
 
         let newUser = new UserSchema({
             vk_id: user_id,
@@ -57,11 +65,28 @@ class OAuthVK {
         });
 
         let saveResult = await newUser.save();
-        this.ctx.body = require("../templates/goodAuth").render({ sid: saveResult.sid });
+        this.addUserBalaces(saveResult._id);
+        this.ctx.body = require("../templates/goodAuth").render({
+            sid: saveResult.sid
+        });
+    }
+
+    async addUserBalaces(userId) {
+        const balanceTemplate = {
+            send_adress: "",
+            user_id: userId,
+            count: 0,
+        }
+        const newRub = new RubBalanceSchema(balanceTemplate);
+        const newCoin = new CoinBalanceSchema(balanceTemplate);
+        newRub.save();
+        newCoin.save();
     }
 
     async validateUser(user) {
-        this.ctx.body = require("../templates/goodAuth").render({ sid: user.sid });
+        this.ctx.body = require("../templates/goodAuth").render({
+            sid: user.sid
+        });
     }
 }
 

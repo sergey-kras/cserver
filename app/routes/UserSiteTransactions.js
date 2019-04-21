@@ -13,6 +13,10 @@ class UserSiteTransactions {
             _id
         } = this.ctx.state.user;
         let transactions = await userSiteTransactions.find({ user_id: _id });
+        transactions = transactions.map(item => {
+            let { date, type, count, status, path } = item;
+            return item = { date, type, count, status, path };
+        });
         if(transactions != []) return ctx.body = transactions;
         else return ctx.body = errors.EMPTY_TRANSACTIONS;
     }

@@ -9,14 +9,13 @@ class User {
     constructor() {}
 
     async info(ctx) {
-        this.ctx = ctx;
         let {
             vk_id,
             login,
             photo,
             date
-        } = this.ctx.state.user;
-        return this.ctx.body = {
+        } = ctx.state.user;
+        ctx.body = {
             vk_id,
             login,
             photo,
@@ -36,13 +35,20 @@ class User {
         let rubs = await RubBalanceSchema.find({
             user_id: _id
         });
-        rubs._id = null;
+        rubs = rubs[0];
+        coins = coins[0];
+
         return this.ctx.body = {
-            rubs,coins
+            rubs: {
+                count: rubs.count,
+                send_adress: rubs.send_adress
+            },
+            coins: {
+                count: coins.count,
+                send_adress: coins.send_adress
+            },
         };
     }
-
-    
 }
 
 module.exports = new User;
